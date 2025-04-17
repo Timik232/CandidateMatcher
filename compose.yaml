@@ -1,9 +1,9 @@
 services:
-  ollama:
+  ollama-matcher:
     build:
       context: .
       dockerfile: Dockerfile_ollama
-    container_name: ollama
+    container_name: ollama-matcher
     ports:
       - "11434:11434"
     volumes:
@@ -11,12 +11,8 @@ services:
       - ./models:/models
     environment:
       - OLLAMA_MODELS=/models
+      - MODEL_NAME=gemma3:4b
     runtime: nvidia
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:11434" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   candidate_matcher:
     build:
@@ -25,8 +21,7 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      ollama:
-        condition: service_healthy
+      - ollama-matcher
     environment:
       - PYTHONUNBUFFERED=1
 

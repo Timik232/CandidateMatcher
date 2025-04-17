@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException, Request
+from typing import Dict
+
+from fastapi import FastAPI, HTTPException, UploadFile
 
 from . import process_json, vacancies
 
@@ -6,9 +8,9 @@ app = FastAPI()
 
 
 @app.post("/candidate_match")
-async def process_candidate(request: Request):
+async def process_candidate(request: UploadFile) -> Dict:
     try:
-        data = await request.json()
+        data = await request.read()
 
         result = process_json(data, vacancies)
 

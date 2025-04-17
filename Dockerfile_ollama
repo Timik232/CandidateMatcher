@@ -6,9 +6,10 @@ VOLUME ["/root/.ollama", "/models"]
 RUN mkdir -p /models && chmod 777 /models
 
 ENV OLLAMA_MODELS="/models"
+ENV MODEL_NAME="gemma3:4b"
 
-RUN ollama pull gemma3:4b
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 11434
-
-ENTRYPOINT ["ollama", "serve", "--host", "0.0.0.0", "--port", "11434"]
+ENTRYPOINT ["entrypoint.sh"]

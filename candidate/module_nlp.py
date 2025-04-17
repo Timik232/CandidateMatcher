@@ -44,6 +44,9 @@ def extract_text(file_path: str):
         return extract_text_from_pdf(file_path)
     elif ext == ".docx":
         return extract_text_from_docx(file_path)
+    elif ext == ".txt":
+        with open(file_path, "r", encoding="utf-8") as f:
+            return f.read()
     else:
         raise ValueError(f"Unsupported file type: {ext}")
 
@@ -196,6 +199,15 @@ def process_resume(file_path: str):
 def save_to_json(data, output_path: str):
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
+
+
+def extract_brief(input_file: str, output_file: str):
+    try:
+        result = process_resume(input_file)
+        save_to_json(result, output_file)
+        logging.info(f"Resume info has been saved to {output_file}")
+    except Exception as e:
+        logging.error(f"Error: {e}")
 
 
 if __name__ == "__main__":
