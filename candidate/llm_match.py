@@ -2,11 +2,11 @@ import json
 import logging
 from typing import Dict
 
-import openai
+import ollama
 
-from .utils import API_URL, MODEL_NAME, SYSTEM_PROMPT
+from .utils import MODEL_NAME, SYSTEM_PROMPT, VacancySchema, ollama_chat
 
-client = openai.OpenAI(base_url=API_URL, api_key="<KEY>")
+client = ollama.Client()
 
 
 def process_json(data: Dict, vacancies: Dict) -> Dict:
@@ -49,14 +49,10 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
         prompt += ", ".join(data["experience"]) + "\n"
         prompt += "Твоя оценка: "
         logging.debug(prompt)
-        response = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ],
-            model=MODEL_NAME,
+        response = ollama_chat(
+            client, model_name=MODEL_NAME, prompt=prompt, system=SYSTEM_PROMPT
         )
-        answers.append(response.choices[0].message.content)
+        answers.append(response)
     prompt = "Твои предыдущие оценки по вакансиям: " + "\n"
     prompt += "\n".join(answers) + "\n"
 
@@ -65,15 +61,15 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
         "Если он не подходит ни по одной, то напиши об этом и скажи, что кандидату нужно изучить"
     )
     logging.debug(prompt)
-    response = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": prompt},
-        ],
-        model=MODEL_NAME,
+    response = ollama_chat(
+        client,
+        model_name=MODEL_NAME,
+        prompt=prompt,
+        system=SYSTEM_PROMPT,
+        schema=VacancySchema.model_json_schema()(),
     )
     try:
-        response = json.loads(response.choices[0].message.content)
+        response = json.loads(response)
     except json.decoder.JSONDecodeError:
         response = {"error": "Invalid JSON response"}
     return response

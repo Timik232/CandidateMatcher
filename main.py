@@ -25,7 +25,7 @@ def main(test_path: str):
     with open(test_path, "r", encoding="utf-8") as file:
         test_data = json.load(file)
     result = process_json(test_data, vacancies)
-    print(result)
+    logging.info(result)
 
 
 if __name__ == "__main__":
