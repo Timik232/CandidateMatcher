@@ -60,13 +60,13 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
         "Теперь напиши, на какую вакансию лучше всего подходит кандидат из всех, и почему именно на нее."
         "Если он не подходит ни по одной, то напиши об этом и скажи, что кандидату нужно изучить"
     )
-    logging.debug(prompt)
+    logging.debug(str(prompt))
     response = ollama_chat(
         client,
         model_name=MODEL_NAME,
         prompt=prompt,
         system=SYSTEM_PROMPT,
-        schema=VacancySchema.model_json_schema()(),
+        schema=VacancySchema.model_json_schema(),
     )
     try:
         response = json.loads(response)
