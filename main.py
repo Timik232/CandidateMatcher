@@ -22,7 +22,6 @@ def test_matcher(extracted_json_path: Optional[str] = None):
 
 
 def main(test_path: str):
-    configure_logging(logging.DEBUG)
     with open(test_path, "r", encoding="utf-8") as file:
         test_data = json.load(file)
     result = process_json(test_data, vacancies)
@@ -30,6 +29,7 @@ def main(test_path: str):
 
 
 if __name__ == "__main__":
+    configure_logging(logging.DEBUG)
     test_path = os.path.join("data", "example.json")
-    test_matcher()
-    # main(test_path)
+    # test_matcher()
+    main(test_path)

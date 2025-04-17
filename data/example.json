@@ -1,8 +1,8 @@
 {
     "base_info": {
-        "full_name": "Контакты\nГеоргий\nГород",
+        "full_name": "Шерри\n Контакты\nГеоргий\nГород",
         "age": 22,
-        "city": "еоргий"
+        "city": "Москва"
     },
     "contacts": {
         "email": "serfertor@mail.ru",
@@ -12,8 +12,8 @@
     },
     "skills": [
         "SAD",
-        "Sklear",
-        "Pytho",
+        "Sklearn",
+        "Python",
         "Agile",
         "BPMN",
         "Pandas",

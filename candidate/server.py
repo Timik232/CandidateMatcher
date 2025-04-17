@@ -2,7 +2,8 @@ from typing import Dict
 
 from fastapi import FastAPI, HTTPException, UploadFile
 
-from . import process_json, vacancies
+from .llm_match import process_json
+from .utils import vacancies
 
 app = FastAPI()
 

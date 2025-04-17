@@ -4,7 +4,7 @@ from typing import Dict
 
 import openai
 
-from . import API_URL, MODEL_NAME, SYSTEM_PROMPT
+from .utils import API_URL, MODEL_NAME, SYSTEM_PROMPT
 
 client = openai.OpenAI(base_url=API_URL, api_key="<KEY>")
 
