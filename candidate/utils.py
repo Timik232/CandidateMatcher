@@ -70,11 +70,14 @@ def ollama_chat(
     if schema is not None:
         params["format"] = schema
 
-    response = client.chat(**params)
+    try:
+        response = client.chat(**params)
+        logging.debug(f"response: {response}")
 
-    logging.debug(f"response: {response}")
+        if not stream:
+            return response["message"]["content"]
 
-    if not stream:
-        return response["message"]["content"]
-
-    return response
+        return response
+    except Exception as e:
+        logging.error(f"Error calling Ollama API: {e}")
+        raise
