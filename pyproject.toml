@@ -19,7 +19,8 @@ dependencies = [
     "requests (>=2.32.3,<3.0.0)",
     "python-docx (>=1.1.2,<2.0.0)",
     "ru-core-news-md @ https://github.com/explosion/spacy-models/releases/download/ru_core_news_md-3.8.0/ru_core_news_md-3.8.0-py3-none-any.whl",
-    "python-multipart (>=0.0.20,<0.0.21)"
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "ollama (>=0.4.8,<0.5.0)"
 ]
 
 [tool.poetry]
