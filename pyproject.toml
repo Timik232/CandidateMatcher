@@ -1,0 +1,26 @@
+[project]
+name = "candidate_matcher"
+version = "0.1.0"
+description = "Project for the hackathon"
+authors = [
+    {name = "Timur Komolov",email = "komolov.timurka@mail.ru"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi (>=0.115.12,<0.116.0)",
+    "openai (>=1.75.0,<2.0.0)",
+    "uvicorn (>=0.34.1,<0.35.0)"
+]
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+pre-commit = "^4.2.0"
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
