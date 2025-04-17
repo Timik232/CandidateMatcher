@@ -14,7 +14,7 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
     Process the input JSON data and return a response.
     :param vacancies: vacancies from the company
     :param data: dict from the json
-    :return: str
+    :return: Dict
     """
     global client
     correspond_dict = {

@@ -19,8 +19,8 @@ if os.path.exists(VACANCIES_PATH):
 else:
     vacancies = {}
 
-API_URL = "http://localhost:11434"
-MODEL_NAME = "gemma3:4b"
+API_URL = os.environ.get("OLLAMA_API_URL", "http://localhost:11434")
+MODEL_NAME = os.environ.get("OLLAMA_MODEL_NAME", "gemma3:4b")
 ollama.base_url = API_URL
 
 
@@ -41,7 +41,7 @@ def ollama_chat(
     system: str | None = None,
     schema: dict | None = None,
     stream: bool = False,
-) -> str | ChatResponse | Iterator[ChatResponse]:
+) -> str | Iterator[ChatResponse]:
     """
     Wrapper function to send a chat-style request to Ollama, optionally with a system prompt
     and JSON-schema formatting.
