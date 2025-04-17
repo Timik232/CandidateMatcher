@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import Dict
 
@@ -8,7 +9,7 @@ from . import API_URL, MODEL_NAME, SYSTEM_PROMPT
 client = openai.OpenAI(base_url=API_URL, api_key="<KEY>")
 
 
-def process_json(data: Dict, vacancies: Dict) -> str:
+def process_json(data: Dict, vacancies: Dict) -> Dict:
     """
     Process the input JSON data and return a response.
     :param vacancies: vacancies from the company
@@ -21,7 +22,6 @@ def process_json(data: Dict, vacancies: Dict) -> str:
         2: "средний",
         3: "высокий",
     }
-    prompt = ""
     answers = []
     for vacancy in vacancies:
         prompt = "Вакансия: " + vacancies[vacancy]["название"] + "\n"
@@ -72,4 +72,8 @@ def process_json(data: Dict, vacancies: Dict) -> str:
         ],
         model=MODEL_NAME,
     )
-    return response.choices[0].message.content
+    try:
+        response = json.loads(response.choices[0].message.content)
+    except json.decoder.JSONDecodeError:
+        response = {"error": "Invalid JSON response"}
+    return response

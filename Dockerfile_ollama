@@ -1,0 +1,14 @@
+FROM ollama/ollama:latest
+
+RUN apt-get update && apt-get install -y curl
+
+VOLUME ["/root/.ollama", "/models"]
+RUN mkdir -p /models && chmod 777 /models
+
+ENV OLLAMA_MODELS="/models"
+
+RUN ollama pull gemma3:4b
+
+EXPOSE 11434
+
+ENTRYPOINT ["ollama", "serve", "--host", "0.0.0.0", "--port", "11434"]
