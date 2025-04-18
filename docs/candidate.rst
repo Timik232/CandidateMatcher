@@ -1,7 +1,7 @@
-candidate package
+Candidate пакет
 =================
 
-Submodules
+Модули
 ----------
 
 candidate.llm\_match module

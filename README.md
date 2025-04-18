@@ -1,5 +1,5 @@
 # CandidateMatcher
-*Для кода ревью в проекте использовался CodeRabbit и Copilot.*
+*Для кода ревью в проекте использовался CodeRabbit и Copilot.* \
 Документация на Sphinx: [Docs](https://candidatematcher.readthedocs.io/ru/latest/)
 ## Описание
 Проект предназначен для автоматической обработки резюме, извлечения ключевых данных и
