@@ -16,7 +16,7 @@ def test_matcher(resume_path: Optional[str] = None):
 
     url = "http://localhost:8000/candidate_match"
     if resume_path is None:
-        resume_path = os.path.join("data", "resume.pdf")
+        resume_path = os.path.join("data", "Komolov.pdf")
 
     try:
         if not os.path.exists(resume_path):
@@ -24,13 +24,13 @@ def test_matcher(resume_path: Optional[str] = None):
             return
         with open(resume_path, "rb") as f:
             files = {
-                "resume_file": (
+                "files": (
                     os.path.basename(resume_path),
                     f,
                     "application/octet-stream",
                 )
             }
-        resp = requests.post(url, files=files)
+            resp = requests.post(url, files=files)
 
         logging.info("Status: %s", resp.status_code)
         logging.info("Response JSON: %s", resp.json())
