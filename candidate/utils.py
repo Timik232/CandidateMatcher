@@ -22,7 +22,6 @@ else:
 
 API_URL = os.environ.get("OLLAMA_API_URL", "http://localhost:11434")
 MODEL_NAME = os.environ.get("OLLAMA_MODEL_NAME", "gemma3:4b")
-ollama.base_url = API_URL
 
 
 class VacancySchema(BaseModel):
