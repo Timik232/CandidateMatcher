@@ -1,5 +1,6 @@
 import os
 import tempfile
+from contextlib import suppress
 from typing import Annotated, Dict
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -18,7 +19,7 @@ async def process_candidate(resume_file: Annotated[UploadFile, File(...)]) -> Di
     сохраняет его во временную директорию, передает путь в extract_brief,
     обрабатывает результат через process_json и возвращает его.
     """
-    # 1) Сохраняем файл в временную папку
+    # 1) Сохраняем файл во временную папку
     try:
         suffix = os.path.splitext(resume_file.filename)[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
@@ -26,7 +27,9 @@ async def process_candidate(resume_file: Annotated[UploadFile, File(...)]) -> Di
             content = await resume_file.read()
             tmp.write(content)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Не удалось сохранить файл: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Не удалось сохранить файл: {e}"
+        ) from e
 
     # 2) Извлекаем данные из резюме
     try:
@@ -34,20 +37,22 @@ async def process_candidate(resume_file: Annotated[UploadFile, File(...)]) -> Di
     except Exception as e:
         # удаляем временный файл перед поднятием ошибки
         os.unlink(temp_path)
-        raise HTTPException(status_code=400, detail=f"Ошибка при обработке резюме: {e}")
+        raise HTTPException(
+            status_code=400, detail=f"Ошибка при обработке резюме: {e}"
+        ) from e
 
     # 3) Удаляем временный файл
-    try:
+    with suppress(OSError):
         os.unlink(temp_path)
-    except OSError:
-        pass
 
     # 4) Совмещаем с вакансией и возвращаем результат
     try:
         result = process_json(resume_dict, vacancies)
         return result
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Ошибка при обработке данных: {e}")
+        raise HTTPException(
+            status_code=400, detail=f"Ошибка при обработке данных: {e}"
+        ) from e
 
 
 @app.get("/")
