@@ -4,12 +4,20 @@ from contextlib import suppress
 from typing import Annotated, Dict
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 from .llm_match import process_json
 from .module_nlp import extract_brief
 from .utils import vacancies
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # можно указать список доменов
+    allow_credentials=True,
+    allow_methods=["*"],  # GET, POST и др.
+    allow_headers=["*"],  # Заголовки, например Content-Type
+)
 
 
 @app.post("/candidate_match")

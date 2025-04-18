@@ -38,6 +38,16 @@ services:
     networks:
       - matcher
 
+  cloudflared-tunnel-candidate:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-tunnel-candidate
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=INSERT_TOKEN
+    restart: always
+    networks:
+      - matcher
+
 volumes:
   ollama_models:
 
