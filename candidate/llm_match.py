@@ -5,9 +5,9 @@ from typing import Dict
 
 import ollama
 
-from .utils import MODEL_NAME, SYSTEM_PROMPT, VacancySchema, ollama_chat
+from .utils import API_URL, MODEL_NAME, SYSTEM_PROMPT, VacancySchema, ollama_chat
 
-client = ollama.Client()
+client = ollama.Client(host=API_URL)
 
 
 def validate_input_data(data: Dict, vacancies: Dict) -> tuple:
