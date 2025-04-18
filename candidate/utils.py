@@ -1,3 +1,4 @@
+""" Файл для вспомогательных функций и констант """
 import json
 import logging
 import os
@@ -26,12 +27,16 @@ ollama.base_url = API_URL
 
 class VacancySchema(BaseModel):
     """
-    Pydantic model generated from JSON Schema draft-07:
+    Pydantic-схема для структурированного ответа от модели Ollama.:
     title: VacancySchema
     """
 
-    vacancy: str = Field(..., description="Название вакансии, на которую подходит")
-    explaining: str = Field(..., description="Описание")
+    vacancy: str = Field(..., description="Название вакансии")
+    percentage: int = Field(
+        ..., description="Процент соответствия кандидата вакансии от 0 до 100"
+    )
+    explaining: str = Field(..., description="Описание соответствия кандидата вакансии")
+    recommendations: str = Field(..., description="Рекомендации по улучшению навыков")
 
 
 def ollama_chat(
@@ -40,22 +45,26 @@ def ollama_chat(
     prompt: str,
     system: str | None = None,
     schema: dict | None = None,
+    max_tokens: int = 4096,
+    temperature: float = 0.4,
     stream: bool = False,
 ) -> str | Iterator[ChatResponse]:
     """
-    Wrapper function to send a chat-style request to Ollama, optionally with a system prompt
-    and JSON-schema formatting.
+    Функция-оболочка для отправки Ollama запроса в виде чата, с системным промптом
+    и форматированием в формате JSON-схемы.
 
     Args:
-        client (ollama.Client): The Ollama client instance.
-        model_name (str): The name of the model in Ollama.
-        prompt (str): The user's message content.
-        system (str | None): Optional system‑level instruction to guide the model.
-        schema (dict | None): Optional JSON schema for structured output.
-        stream (bool): Whether to return an iterator that yields streaming responses.
+        client (ollama.Client): Клиент ollama.
+        model_name (str): название модели в Ollama.
+        prompt (str): Основный промпт.
+        system (str | None): Системный промпт
+        schema (dict | None): Опциональная Json-схема для форматирования ответа.
+        max_tokens (int): Максимальное количество токенов
+        temperature (float): Температура для генерации текста.
+        stream (bool): Следует ли возвращать итератор, который выдает потоковые ответы.
 
     Returns:
-        str: The model's reply content (or JSON string if schema is provided).
+        str: Содержимое ответа модели (или строка JSON, если указана схема).
     """
     params: dict = {
         "model": model_name,
@@ -71,7 +80,13 @@ def ollama_chat(
         params["format"] = schema
 
     try:
-        response = client.chat(**params)
+        response = client.chat(
+            **params,
+            options={
+                "num_ctx": max_tokens,
+                "temperature": temperature,
+            },
+        )
         logging.debug(f"response: {response}")
 
         if not stream:
