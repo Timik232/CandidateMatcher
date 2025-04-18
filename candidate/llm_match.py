@@ -191,4 +191,7 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
 
     best = max(answers, key=lambda x: x["percentage"])
 
+    best["full_name"] = data["base_info"]["full_name"].split("\n")[0]
+    best["email"] = data["contacts"]["email"]
+    best["phone"] = data["contacts"]["phone"]
     return best

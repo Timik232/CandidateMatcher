@@ -13,7 +13,7 @@ app = FastAPI()
 
 
 @app.post("/candidate_match")
-async def process_candidate(resume_file: Annotated[UploadFile, File(...)]) -> Dict:
+async def process_candidate(files: Annotated[UploadFile, File(...)]) -> Dict:
     """
     Принимает файл резюме в формате multipart/form-data,
     сохраняет его во временную директорию, передает путь в extract_brief,
@@ -21,10 +21,10 @@ async def process_candidate(resume_file: Annotated[UploadFile, File(...)]) -> Di
     """
     # 1) Сохраняем файл во временную папку
     try:
-        suffix = os.path.splitext(resume_file.filename)[1]
+        suffix = os.path.splitext(files.filename)[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
             temp_path = tmp.name
-            content = await resume_file.read()
+            content = await files.read()
             tmp.write(content)
     except Exception as e:
         raise HTTPException(
