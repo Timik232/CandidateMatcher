@@ -284,18 +284,17 @@ def save_to_json(data: Dict[str, Any], output_path: str) -> None:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def extract_brief(input_file: str, output_file: str) -> Dict[str, any] | None:
+def extract_brief(input_file: str) -> Dict[str, any] | None:
     """Извлекает данные из резюме и сохраняет их в JSON.
 
     Args:
         input_file: Путь к файлу резюме
-        output_file: Путь для сохранения результата в формате json
 
     Returns:
         Dict[str, any]: Извлеченные данные из резюме
 
     Examples:
-        >>> extract_brief("resume.pdf", "output.json")
+        >>> extract_brief("resume.pdf")
     """
     try:
         result = process_resume(input_file)
