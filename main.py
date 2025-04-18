@@ -18,18 +18,25 @@ def test_matcher(resume_path: Optional[str] = None):
     if resume_path is None:
         resume_path = os.path.join("data", "resume.pdf")
 
-    with open(resume_path, "rb") as f:
-        files = {
-            "resume_file": (
-                os.path.basename(resume_path),
-                f,
-                "application/octet-stream",
-            )
-        }
+    try:
+        if not os.path.exists(resume_path):
+            logging.error(f"Resume file not found: {resume_path}")
+            return
+        with open(resume_path, "rb") as f:
+            files = {
+                "resume_file": (
+                    os.path.basename(resume_path),
+                    f,
+                    "application/octet-stream",
+                )
+            }
         resp = requests.post(url, files=files)
 
-    logging.info("Status: %s", resp.status_code)
-    logging.info("Response JSON: %s", resp.json())
+        logging.info("Status: %s", resp.status_code)
+        logging.info("Response JSON: %s", resp.json())
+
+    except Exception as e:
+        logging.error(f"Error in test_matcher: {str(e)}")
 
 
 def main(test_path: str):
