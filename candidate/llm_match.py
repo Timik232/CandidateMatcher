@@ -87,10 +87,10 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
     Returns:
         Dict: Результат анализа в формате:
             {
-                "вакансия": "Название лучшей вакансии",
-                "процент_соответствия": int,
-                "обоснование": "Текст оценки",
-                "рекомендации": [список рекомендаций]
+                "vacancy": "Название лучшей вакансии",
+                "percentage": int,
+                "explaining": "Текст оценки",
+                "recommendations": [список рекомендаций]
             }
             или {"error": ...} в случае ошибки
 
@@ -101,7 +101,8 @@ def process_json(data: Dict, vacancies: Dict) -> Dict:
         {
             "vacancy": "Программист",
             "percentage": 85,
-            "explaining": "Соответствует основным требованиям..."
+            "explaining": "Соответствует основным требованиям...",
+            "recommendations": "Следует изучить..."
         }
 
     Notes:
