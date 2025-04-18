@@ -14,13 +14,13 @@ RESET_COLOR = "\x1b[0m"
 
 
 def hex_to_ansi(hex_color: str) -> str:
-    """Convert hexadecimal color code to ANSI escape sequence.
+    """Конвертирует HEX-код цвета в ANSI escape-последовательность.
 
     Args:
-        hex_color (str): Hexadecimal color code in format '#RRGGBB'
+        hex_color (str): HEX-код цвета в формате '#RRGGBB'
 
     Returns:
-        str: ANSI escape sequence for the color, or empty string if conversion fails
+        str: ANSI escape-последовательность для цвета или пустая строка при ошибке
     """
     hex_color = hex_color.lstrip("#")
     if len(hex_color) != 6:
@@ -37,17 +37,17 @@ def hex_to_ansi(hex_color: str) -> str:
 
 
 class ColoredFormatter(Formatter):
-    """Custom formatter that adds color to log messages using ANSI escape codes.
-    The colors are determined by the LOG_COLORS mapping based on log level."""
+    """Кастомный форматтер для добавления цветов в логи с помощью ANSI-кодов.
+    Цвета определяются на основе уровня логирования в соответствии с LOG_COLORS."""
 
     def format(self, record: LogRecord) -> str:
-        """Format the specified log record with color.
+        """Форматирует запись лога с добавлением цветовых кодов.
 
         Args:
-            record (LogRecord): The log record to be formatted
+            record (LogRecord): Запись лога для форматирования
 
         Returns:
-            str: Formatted log message with color codes
+            str: Отформатированное сообщение с цветовыми кодами
         """
         color_code = hex_to_ansi(LOG_COLORS.get(record.levelname, ""))
         message = super().format(record)
@@ -55,14 +55,17 @@ class ColoredFormatter(Formatter):
 
 
 def configure_logging(level: int = logging.INFO) -> None:
-    """Configure root logger with colored output handler.
+    """Настраивает корневой логгер с обработчиком цветного вывода.
 
     Args:
-        level (int): Logging level to set (logging.INFO or logging.DEBUG).
-            Defaults to logging.INFO.
+        level (int): Уровень логирования (logging.INFO или logging.DEBUG).
+            По умолчанию: logging.INFO.
 
     Raises:
-        ValueError: If level is not logging.INFO or logging.DEBUG
+        ValueError: Если указан недопустимый уровень логирования
+
+    Примечание:
+        Поддерживаются только уровни logging.INFO и logging.DEBUG
     """
     if level != logging.INFO and level != logging.DEBUG:
         raise ValueError("You can use only logging.info or logging.debug")

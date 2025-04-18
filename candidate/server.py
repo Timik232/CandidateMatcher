@@ -6,6 +6,7 @@ from typing import Dict
 from fastapi import FastAPI, HTTPException, UploadFile
 
 from .llm_match import process_json
+from .module_nlp import extract_brief
 from .utils import vacancies
 
 app = FastAPI()
@@ -15,9 +16,8 @@ app = FastAPI()
 async def process_candidate(request: UploadFile) -> Dict:
     try:
         data = await request.read()
-
-        result = process_json(data, vacancies)
-
+        resume_dict = extract_brief(data)
+        result = process_json(resume_dict, vacancies)
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Ошибка обработки JSON: {str(e)}")
