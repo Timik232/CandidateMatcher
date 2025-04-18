@@ -1,4 +1,4 @@
-"""File for configuring logging with colored output."""
+"""Файл для настройки ведения журнала с цветным выводом."""
 import logging
 from logging import Formatter, LogRecord, StreamHandler
 from typing import Dict

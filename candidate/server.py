@@ -1,3 +1,6 @@
+"""
+Файл для fastapi сервиса
+"""
 from typing import Dict
 
 from fastapi import FastAPI, HTTPException, UploadFile

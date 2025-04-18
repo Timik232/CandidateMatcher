@@ -1,7 +1,9 @@
+# Файл для извлечения информации из резюме
 import json
 import logging
 import os
 import re
+from typing import Any, Dict, List, Optional
 
 import docx
 import pdfplumber
@@ -23,7 +25,15 @@ HEADER_MAP = {
 }
 
 
-def extract_text_from_pdf(file_path: str):
+def extract_text_from_pdf(file_path: str) -> str:
+    """Извлекает текст из PDF-файла.
+
+    Args:
+        file_path: Путь к PDF-файлу
+
+    Returns:
+        str: Текст, извлеченный из всех страниц PDF
+    """
     text = ""
     with pdfplumber.open(file_path) as pdf:
         for page in pdf.pages:
@@ -32,13 +42,32 @@ def extract_text_from_pdf(file_path: str):
     return text
 
 
-def extract_text_from_docx(file_path: str):
+def extract_text_from_docx(file_path: str) -> str:
+    """Извлекает текст из документа DOCX.
+
+    Args:
+        file_path: Путь к DOCX-файлу
+
+    Returns:
+        str: Текст, извлеченный из всех параграфов документа
+    """
     doc = docx.Document(file_path)
     text = "\n".join([para.text for para in doc.paragraphs])
     return text
 
 
-def extract_text(file_path: str):
+def extract_text(file_path: str) -> str:
+    """Извлекает текст из файла в зависимости от его формата.
+
+    Args:
+        file_path: Путь к файлу (поддерживаются .pdf, .docx и .txt)
+
+    Returns:
+        str: Извлеченный текст
+
+    Raises:
+        ValueError: Если формат файла не поддерживается
+    """
     ext = os.path.splitext(file_path)[1].lower()
     if ext == ".pdf":
         return extract_text_from_pdf(file_path)
@@ -51,34 +80,37 @@ def extract_text(file_path: str):
         raise ValueError(f"Unsupported file type: {ext}")
 
 
-def extract_contacts(text: str):
+def extract_contacts(text: str) -> Dict[str, str]:
+    """Извлекает контактные данные из текста резюме.
+
+    Args:
+        text: Текст резюме
+
+    Returns:
+        Dict[str, str]: Словарь с найденными контактами (email, телефон, соцсети)
+    """
     contacts = {}
 
-    # Email
     email_match = re.search(r"[\w\.-]+@[\w\.-]+\.\w+", text)
     if email_match:
         contacts["email"] = email_match.group(0)
 
-    # Phone
     phone_match = re.search(
         r"(?:(?:8|\+7)[\- ]?)?(?:\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}", text
     )
     if phone_match:
         contacts["phone"] = phone_match.group(0)
 
-    # Telegram
     telegram_match = re.search(r"@[\w\d_]+", text)
     if telegram_match:
         tag = telegram_match.group(0)
         if not re.match(r"[\w\.-]+@[\w\.-]+\.\w+", tag):
             contacts["telegram"] = tag
 
-    # GitHub
     github_match = re.search(r"(https?://)?(www\.)?github\.com/[^\s\n]+", text)
     if github_match:
         contacts["github"] = github_match.group(0)
 
-    # VK
     vk_match = re.search(
         r"(https?://)?(www\.)?(vk\.com/[^\s\n]+|вконтакте|вк|vk@[\w\d_]+)",
         text,
@@ -87,12 +119,10 @@ def extract_contacts(text: str):
     if vk_match:
         contacts["vk"] = vk_match.group(0)
 
-    # hh.ru
     hh_match = re.search(r"(https?://)?(www\.)?hh\.ru/[^\s\n]+", text)
     if hh_match:
         contacts["hh"] = hh_match.group(0)
 
-    # LinkedIn
     linkedin_match = re.search(r"(https?://)?(www\.)?linkedin\.com/[^\s\n]+", text)
     if linkedin_match:
         contacts["linkedin"] = linkedin_match.group(0)
@@ -100,7 +130,15 @@ def extract_contacts(text: str):
     return contacts
 
 
-def normalize_header(line: str):
+def normalize_header(line: str) -> Optional[str]:
+    """Определяет категорию заголовка по нечеткому соответствию.
+
+    Args:
+        line: Текст заголовка для анализа
+
+    Returns:
+        Optional[str]: Нормализованное название категории или None
+    """
     for block_type, examples in HEADER_MAP.items():
         match, score, _ = process.extractOne(line.lower(), examples, scorer=fuzz.ratio)
         if score > 75:
@@ -108,7 +146,15 @@ def normalize_header(line: str):
     return None
 
 
-def split_into_blocks_fuzzy(text: str):
+def split_into_blocks_fuzzy(text: str) -> Dict[str, str]:
+    """Разделяет текст резюме на блоки по заголовкам.
+
+    Args:
+        text: Полный текст резюме
+
+    Returns:
+        Dict[str, str]: Словарь блоков с текстом
+    """
     blocks = {}
     current_block = "other"
     blocks[current_block] = []
@@ -131,33 +177,47 @@ def split_into_blocks_fuzzy(text: str):
     return blocks
 
 
-def extract_keywords(text: str, lang: str = "ru", max_keywords: int = 50):
+def extract_keywords(text: str, lang: str = "ru", max_keywords: int = 50) -> List[str]:
+    """Извлекает ключевые слова из текста.
+
+    Args:
+        text: Исходный текст
+        lang: Язык текста
+        max_keywords: Максимальное количество ключевых слов
+
+    Returns:
+        List[str]: Список извлеченных ключевых слов
+    """
     kw_extractor = yake.KeywordExtractor(lan=lang, n=1, top=max_keywords)
     keywords = kw_extractor.extract_keywords(text)
 
     return [kw for kw, score in keywords]
 
 
-def extract_base_info(text: str):
+def extract_base_info(text: str) -> Dict[str, Any]:
+    """Извлекает базовую информацию о кандидате.
+
+    Args:
+        text: Текст резюме
+
+    Returns:
+        Dict[str, Any]: Словарь с данными (имя, возраст, город)
+    """
     info = {}
 
     head_text = "\n".join(text.splitlines()[:10])
     doc = nlp(text)
 
-    # Имя
     persons = [ent.text for ent in doc.ents if ent.label_ == "PER"]
-    # clean_persons = [p for p in persons if all(c.isalpha() or c.isspace() for c in p) and len(p.split()) <= 3]
     if persons:
         info["full_name"] = persons[0]
 
-    # Возраст
     age_match = re.search(
         r"(?:возраст[:\s]*)?(\b\d{2}\b)\s*(?:лет|года?|г\.)?", head_text, re.IGNORECASE
     )
     if age_match:
         info["age"] = int(age_match.group(1))
 
-    # Город — из GPE
     cities = [ent.text for ent in doc.ents if ent.label_ == "LOC"]
     if cities:
         info["city"] = cities[0]
@@ -165,7 +225,21 @@ def extract_base_info(text: str):
     return info
 
 
-def process_resume(file_path: str):
+def process_resume(file_path: str) -> Dict[str, Any]:
+    """Обрабатывает файл резюме и извлекает структурированные данные.
+
+    Args:
+        file_path: Путь к файлу резюме
+
+    Returns:
+        Dict[str, Any]: Словарь с данными резюме, содержащий разделы:
+            - base_info: базовая информация о кандидате
+            - contacts: контактные данные
+            - skills: навыки
+            - experience: ключевые слова из опыта работы
+            - projects: ключевые слова из проектов
+            - other_sections: прочие разделы резюме
+    """
     text = extract_text(file_path)
     blocks_fuzzy = split_into_blocks_fuzzy(text)
 
@@ -174,7 +248,7 @@ def process_resume(file_path: str):
     projects_text = blocks_fuzzy.get("projects", "")
 
     contact_info = extract_contacts(text)
-    base_info = extract_base_info(text)  # передаём блоки
+    base_info = extract_base_info(text)
 
     skills_keywords = extract_keywords(skills_text)
     experience_keywords = extract_keywords(experience_text)
@@ -196,12 +270,33 @@ def process_resume(file_path: str):
     return resume_data
 
 
-def save_to_json(data, output_path: str):
+def save_to_json(data: Dict[str, Any], output_path: str) -> None:
+    """Сохраняет данные в JSON-файл.
+
+    Args:
+        data: Данные для сохранения
+        output_path: Путь к выходному файлу
+
+    Returns:
+        None
+    """
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-def extract_brief(input_file: str, output_file: str):
+def extract_brief(input_file: str, output_file: str) -> None:
+    """Извлекает данные из резюме и сохраняет их в JSON.
+
+    Args:
+        input_file: Путь к файлу резюме
+        output_file: Путь для сохранения результата
+
+    Returns:
+        None
+
+    Examples:
+        >>> extract_brief("resume.pdf", "output.json")
+    """
     try:
         result = process_resume(input_file)
         save_to_json(result, output_file)
