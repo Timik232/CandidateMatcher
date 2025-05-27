@@ -1,3 +1,6 @@
 [submodule "hack-frontend"]
 	path = hack-frontend
 	url = https://github.com/eiparfenov/hack-frontend
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/Midnight-Knight/hack270525.git
