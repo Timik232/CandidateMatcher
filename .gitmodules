@@ -1,5 +1,5 @@
 [submodule "backend"]
-	path = hack-frontend
+	path = backend
 	url = https://github.com/eiparfenov/hack-frontend
 [submodule "frontend"]
 	path = frontend
